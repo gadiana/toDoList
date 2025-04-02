@@ -1,0 +1,10 @@
+@media (max-width: 1000px) {
+    .containerBottom {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .containerBottomSemi{
+        width: 100%;
+    }
+  }
+  
