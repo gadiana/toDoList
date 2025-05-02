@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 
 function CreateList({ save, setShowModal }) {
@@ -10,6 +10,15 @@ function CreateList({ save, setShowModal }) {
     selectedTime: "",
   });
 
+  const [categories, setCategories] = useState([]);
+
+  // Load categories from localStorage on mount
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("taskLists")) || [];
+    const categoryNames = stored.map((list) => list.name);
+    setCategories(categoryNames);
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -20,8 +29,8 @@ function CreateList({ save, setShowModal }) {
       Title: formData.title,
       Description: formData.description,
       Category: formData.category,
-      Date: formData.selectedDate,
-      Time: formData.selectedTime,
+      Date: formData.selectedDate || null,
+      Time: formData.selectedTime || null,
     };
     save(taskObj);
   };
@@ -77,16 +86,19 @@ function CreateList({ save, setShowModal }) {
                 className="border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
                 value={formData.category}
                 onChange={handleChange}
+                required
               >
                 <option value="">Select category</option>
-                <option value="Education">Education</option>
-                <option value="Work">Work</option>
-                <option value="Personal">Personal</option>
+                {categories.map((cat, idx) => (
+                  <option key={idx} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="col-span-2 sm:col-span-1">
               <label className="block mb-2 text-sm font-medium text-gray-900">
-                Date
+                Date <span className="text-gray-500 text-xs">(optional)</span>
               </label>
               <input
                 type="date"
@@ -94,12 +106,11 @@ function CreateList({ save, setShowModal }) {
                 className="border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
                 value={formData.selectedDate}
                 onChange={handleChange}
-                required
               />
             </div>
             <div className="col-span-2 sm:col-span-1">
               <label className="block mb-2 text-sm font-medium text-gray-900">
-                Time
+                Time <span className="text-gray-500 text-xs">(optional)</span>
               </label>
               <input
                 type="time"
@@ -107,7 +118,6 @@ function CreateList({ save, setShowModal }) {
                 className="border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
                 value={formData.selectedTime}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>

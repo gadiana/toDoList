@@ -10,7 +10,15 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
     selectedTime: "",
   });
 
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
+    // Load categories from localStorage
+    const stored = JSON.parse(localStorage.getItem("taskLists")) || [];
+    const categoryNames = stored.map((list) => list.name);
+    setCategories(categoryNames);
+
+    // Load task data for editing
     if (taskToEdit) {
       setFormData({
         title: taskToEdit.Title || "",
@@ -32,8 +40,8 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
       Title: formData.title,
       Description: formData.description,
       Category: formData.category,
-      Date: formData.selectedDate,
-      Time: formData.selectedTime,
+      Date: formData.selectedDate || null,
+      Time: formData.selectedTime || null,
     };
     updateList(updatedTask);
     setShowModal(false);
@@ -68,6 +76,7 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
                 required
               />
             </div>
+
             <div className="col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-900">
                 Description
@@ -81,6 +90,7 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
                 onChange={handleChange}
               ></textarea>
             </div>
+
             <div className="col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-900">
                 Category
@@ -92,14 +102,17 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
                 onChange={handleChange}
               >
                 <option value="">Select category</option>
-                <option value="Education">Education</option>
-                <option value="Work">Work</option>
-                <option value="Personal">Personal</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
             </div>
+
             <div className="col-span-2 sm:col-span-1">
               <label className="block mb-2 text-sm font-medium text-gray-900">
-                Date
+                Date <span className="text-gray-500 text-xs">(optional)</span>
               </label>
               <input
                 type="date"
@@ -107,12 +120,12 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
                 className="border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
                 value={formData.selectedDate}
                 onChange={handleChange}
-                required
               />
             </div>
+
             <div className="col-span-2 sm:col-span-1">
               <label className="block mb-2 text-sm font-medium text-gray-900">
-                Time
+                Time <span className="text-gray-500 text-xs">(optional)</span>
               </label>
               <input
                 type="time"
@@ -120,10 +133,10 @@ function EditList({ updateList, setShowModal, taskToEdit }) {
                 className="border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
                 value={formData.selectedTime}
                 onChange={handleChange}
-                required
               />
             </div>
           </div>
+
           <div className="flex justify-end gap-2">
             <button
               type="button"

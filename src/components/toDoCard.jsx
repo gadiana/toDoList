@@ -4,7 +4,7 @@ import { MdDelete, MdCheckCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { CiStar } from "react-icons/ci";
 import EditList from "../modals/editLIst";
 
-function ToDoCard({ title, category, description, date, time, deleteTask, index, updateTask }) {
+function ToDoCard({ title, category, description, date, time, deleteTask, index, updateTask, isToday }) {
   const [showModal, setShowModal] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
   const [isDone, setIsDone] = useState(false);
@@ -32,53 +32,68 @@ function ToDoCard({ title, category, description, date, time, deleteTask, index,
   };
 
   return (
-    <div className={`w-60 max-w-60 min-w-40 border rounded-sm px-5 py-4 flex flex-col justify-between h-full cardContainer ${isDone ? "opacity-50" : ""}`}>
-      <div className="flex items-center justify-center title">
-        <p className={`text-lg font-semibold ${isDone ? "line-through text-gray-500" : ""}`}>{title}</p>
-      </div>
-      <br />
-      <div className="flex h-100 flex-col gap-2 details">
-        <p className="text-sm text-gray-500">
-          Description: <span className="font-medium text-gray-700">{description}</span>
-        </p>
-        <div className="mt-auto mb-5">
-          <p className="text-sm text-gray-500">
-            Category: <span className="font-medium text-gray-700">{category}</span>
-          </p>
-          <p className="text-sm text-gray-500">
-            Date: <span className="font-medium text-gray-700">{date}</span>
-          </p>
-          <p className="text-sm text-gray-500">
-            Time: <span className="font-medium text-gray-700">{time}</span>
-          </p>
-        </div>
-      </div>
+<div
+  className={`w-full min-h-20 h-20 bg-gray-200 border border-stone-300 rounded-xl px-4 py-2 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-300 ${
+    isDone ? "opacity-60" : ""
+  } ${isToday ? "border-l-4 border-blue-500" : ""}`}
+>
+  {/* Left Section: Title + Info */}
+  <div className="flex flex-col justify-between overflow-hidden">
+    <p className={`text-sm font-semibold truncate ${isDone ? "line-through text-gray-500" : "text-stone-800"}`}>
+      {title}
+    </p>
+    <p className="text-xs text-stone-500 truncate">
+      {category} • {date} • {time}
+    </p>
+  </div>
 
-      <div className="flex justify-end gap-2 mt-auto">
-        <span onClick={toggleDone} className="text-xl cursor-pointer">
-          {isDone ? <MdCheckCircle className="text-green-500" /> : <MdRadioButtonUnchecked className="text-gray-500" />}
-        </span>
-        <span onClick={toggleStar} className="text-xl cursor-pointer">
-          {isStarred ? <FaStar className="text-yellow-500" /> : <CiStar className="text-blue-500" />}
-        </span>
-        <FaEdit className="text-xl cursor-pointer text-blue-500" onClick={() => setShowModal(true)} />
-        <MdDelete className="text-xl cursor-pointer text-red-500" onClick={deleteTask} />
-      </div>
-
-      {showModal && (
-        <EditList
-          setShowModal={setShowModal}
-          updateList={(updatedTask) => updateTask(index, updatedTask)}
-          taskToEdit={{
-            Title: title,
-            Description: description,
-            Category: category,
-            Date: date,
-            Time: time,
-          }}
-        />
+  {/* Right Section: Actions */}
+  <div className="flex items-center gap-3 ml-4">
+    {/* Done toggle */}
+    <span onClick={toggleDone} className="text-base cursor-pointer">
+      {isDone ? (
+        <MdCheckCircle className="text-green-500 hover:text-green-600 transition-all" />
+      ) : (
+        <MdRadioButtonUnchecked className="text-gray-500 hover:text-gray-600 transition-all" />
       )}
-    </div>
+    </span>
+
+    {/* Star toggle */}
+    <span onClick={toggleStar} className="text-base cursor-pointer">
+      {isStarred ? (
+        <FaStar className="text-yellow-500 hover:text-yellow-600 transition-all" />
+      ) : (
+        <CiStar className="text-stone-500 hover:text-stone-600 transition-all" />
+      )}
+    </span>
+
+    {/* Edit and Delete */}
+    <FaEdit
+      className="text-base cursor-pointer text-blue-500 hover:text-blue-600 transition-all"
+      onClick={() => setShowModal(true)}
+    />
+    <MdDelete
+      className="text-base cursor-pointer text-red-500 hover:text-red-600 transition-all"
+      onClick={deleteTask}
+    />
+  </div>
+
+  {/* Modal */}
+  {showModal && (
+    <EditList
+      setShowModal={setShowModal}
+      updateList={(updatedTask) => updateTask(index, updatedTask)}
+      taskToEdit={{
+        Title: title,
+        Description: description,
+        Category: category,
+        Date: date,
+        Time: time,
+      }}
+    />
+  )}
+</div>
+
   );
 }
 
